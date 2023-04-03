@@ -1,7 +1,6 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QListWidget, QVBoxLayout, QHBoxLayout, QPushButton
 from PyQt5.QtGui import QPixmap, QColor
-
 class DragAndDrop(QWidget):
 
     def __init__(self):

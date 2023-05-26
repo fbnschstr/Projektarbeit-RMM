@@ -4,21 +4,23 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 
-path = os.getcwd()
-print(path)
-img_path = os.path.join(path,"Zugeschnittene_Bilder")
-print(img_path)
+# Pfad der aktuellen Datei
+path = os.path.dirname(__file__)
+img_path = os.path.join(path, "Zugeschnittene_Bilder")
+#print(img_path)
+if not os.path.exists(img_path):
+        os.mkdir(img_path)
+
 save_path_closing = os.path.join(path, "Bilder_Closed")
-print(save_path_closing)
-save_path_thhold = os.path.join(save_path_closing, "Threshold")
-print(save_path_thhold)
-      
+#print(save_path_closing)
 if not os.path.exists(save_path_closing):
     os.mkdir(save_path_closing)
-    
+
+save_path_thhold = os.path.join(save_path_closing, "Threshold")
+#print(save_path_thhold)
 if not os.path.exists(save_path_thhold):
         os.mkdir(save_path_thhold)
-        
+
 #Liste ausgeben, welche Bilddateien im Order abliegen mit dem Befehl os.listdir 
 files = os.listdir(img_path)
 
@@ -33,23 +35,18 @@ for f in files:
         image_name = f"{f}"
          
         #Pfad zum Suchen der Bilder festlegen
-        '''mit os.chdir, wird festgelegt in welchem Ordner die Bilder abgespeichert werden können
-        Da im Verlauf der Schleife der Speicherort geändert wird, muss er ganz zu Beginn der Schleife wieder zurück auf den Ordner geändert werden,
-        in dem die Bilder abliegen, für die die Porösität bestimmt werden soll'''
         os.chdir(img_path)
 
         # Ordnerstruktur erstellen für die Bilddateien, bei dem die Poren vollständig scharz ausgefüllt sind. 
         file_name = "closed_"+ image_name
-        #print(file_name)
         #save_path_old =  os.path.join(path, file_name)
-        #print(save_path_old)
         save_path_closing_img = os.path.join(save_path_closing, file_name)
         print("Save_path_closing_img:", save_path_closing_img)
     
         #Öffnen des Bildes
         img = cv2.imread(image_name, cv2.IMREAD_GRAYSCALE)
         
-       #Poren füllen mit dem Opening Befehl, über die Kernel kann eingestellt werden, wie viel schwarz gemacht wird von den Poren.
+        #Poren füllen mit dem Opening Befehl, über die Kernel kann eingestellt werden, wie viel schwarz gemacht wird von den Poren.
         opening = cv2.morphologyEx(img, cv2.MORPH_OPEN, kernel)
         
         # Threshold festlegen, dabei Verwenden von Thresh Binary --> Bild wird nur noch in schwarz und weiß, keine graustufen dargestellt.
@@ -75,8 +72,7 @@ for f in files:
         print("Poroesität der Probe in %",poroesitaet)
         dichte = (white_pixel/ges_pixel)*100
         print("Dichte der Probe in %",dichte)
-        
-        
+         
         ''' optional: # plotten Threshold --> Wird der Wert 200 nach oben verschoben, können auch die schwarzen Anteile nach oben verschoben werden. 
         titles = ['Opening', 'Th1']
         images = [opening, th1]
@@ -97,13 +93,4 @@ for f in files:
         
         os.chdir(save_path_thhold)        
         cv2.imwrite(save_path_thhold_img, th1)
-        
-        
-        
-        '''if not os.path.exists(save_path_closing_img):
-            cv2.imwrite(file_name, opening)
-            os.rename(save_path_old, save_path_closing_img)'''
-        
-        #Verschieben der Datei in den Closed-Ordner
-        
-        
+      

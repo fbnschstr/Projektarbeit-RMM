@@ -6,9 +6,11 @@ from matplotlib import pyplot as plt
 
 path = os.getcwd()
 print(path)
-img_path = os.path.join(path,"Zugeschnittene_Bilder")
+img_prepath = os.path.join(path,"Bilder")
+print(img_prepath)
+img_path = os.path.join(img_prepath,"Zugeschnittene_Bilder")
 print(img_path)
-save_path_closing = os.path.join(path, "Bilder_Closed")
+save_path_closing = os.path.join(img_prepath, "Bilder_Closed")
 print(save_path_closing)
 save_path_thhold = os.path.join(save_path_closing, "Threshold")
 print(save_path_thhold)
@@ -53,7 +55,7 @@ for f in files:
         opening = cv2.morphologyEx(img, cv2.MORPH_OPEN, kernel)
         
         # Threshold festlegen, dabei Verwenden von Thresh Binary --> Bild wird nur noch in schwarz und weiß, keine graustufen dargestellt.
-        ret,th1 = cv2.threshold(opening,185,255,cv2.THRESH_BINARY)
+        ret,th1 = cv2.threshold(opening,157,255,cv2.THRESH_BINARY)
         
         #Zählen der Pixel, die schwarz und weiß sind. 
         #Zählen wird mit dem threshold-Bild durchgeführt, da es hier nur noch schwarz und weiß gibt.
@@ -105,5 +107,7 @@ for f in files:
             os.rename(save_path_old, save_path_closing_img)'''
         
         #Verschieben der Datei in den Closed-Ordner
+        
+    '''Funktion Porosität: Übergabe rein zugeschnittenes Bild --> raus Porositätsvariable)'''
         
         

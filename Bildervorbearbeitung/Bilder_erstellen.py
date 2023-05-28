@@ -6,7 +6,7 @@ import numpy as np
 '''------------------------------------------ Ordnerstrucktur aufbauen ------------------------------------------'''
 # Pfad der aktuellen Datei
 path = os.path.dirname(__file__)
-
+path1 = os.getcwd()
 img_folder_path = os.path.join(path, "Bilder")
 print(img_folder_path)
 # Erstelle den Ordner für die Bilder, falls noch nicht vorhanden
@@ -106,7 +106,7 @@ for filename in os.listdir(img_folder_path):
                 # Speichere den zugeschnittenen Bereich ab, falls der Mittelwert größer als der Threshold ist
                 # Randbild
                 img_crp_save_path = os.path.join(crp_img_save_path_rand,crp_name)
-                os.mkdir(img_crp_save_path + filename)
+                #os.mkdir(img_crp_save_path + filename)
                 # Speichere das zugeschnittene Bild
                 cv2.imwrite(img_crp_save_path, crp_img)
             else:

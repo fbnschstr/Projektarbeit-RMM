@@ -11,28 +11,6 @@ def struktur_erstellen(name_pfad, ort_pfad):
         os.mkdir(name_pfad)
     return name_pfad
 
-# chat-gpt antwort aus 
-def schreibe_porositaet_in_csv(csv_path, csv_name, x, y, porositaet):
-    os.chdir(csv_path)
-    # Überprüfe, ob die Datei bereits existiert
-    datei_existiert = False
-    try:
-        with open(csv_name, 'w') as csvfile:
-            datei_existiert = True
-    except FileNotFoundError:
-        pass
-
-    # CSV-Datei schreiben
-    with open(csv_name, 'a', newline='') as csvfile:
-        csvwriter = csv.writer(csvfile)
-        
-        # Schreibe Überschriften, falls die Datei neu ist
-        if not datei_existiert:
-            csvwriter.writerow(['x', 'y', 'Porosität'])
-        
-        # Schreibe Werte
-        csvwriter.writerow([x, y, porositaet])
-
 '''------------------------------------------ Ordnerstrucktur aufbauen ------------------------------------------'''
 # Pfad der aktuellen Datei
 path = os.path.dirname(__file__)

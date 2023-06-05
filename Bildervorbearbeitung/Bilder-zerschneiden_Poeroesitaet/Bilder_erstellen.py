@@ -65,7 +65,6 @@ anzahl = False
 threshold_edge = 255/2
 
 '''------------------------------------------ Bilder zuschneiden und nach Rand und nicht Randbildern sortieren ------------------------------------------'''
-
 ''' Bilder laden und Größe bestimmen'''
 # Durchsuche den Ordner nach Dateien
 for filename in os.listdir(img_folder_path):
@@ -145,7 +144,6 @@ for filename in os.listdir(img_folder_path):
                 cv2.imwrite(img_crp_save_path1, crp_img)
 
                 #Porositaet aufrufen und bestimmen (Prorsitaetswert in Variabler dummy zwischen speichern, anschließend Listen generieren)
-                ##getPorositaet(crp_img_save_path, save_path_closing, save_path_thhold, crp_name)
                 i = i+1     #Durchlaufvariable zum kontinuirlichen Beschreiben der Listen-Variablen (porositaet.list und name_list)
                 dummy = getPorositaet(crp_img_save_path, save_path_closing, save_path_thhold, crp_name)
                 porositaet_list.insert(i, dummy)

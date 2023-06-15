@@ -21,6 +21,7 @@ def rand(img, threshold):
     height, width = img.shape
     black_row = False
     black_column = False
+    
     for row in range(height):
         if np.mean(img[row,:]) < threshold:
             black_row = True

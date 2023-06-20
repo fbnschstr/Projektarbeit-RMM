@@ -58,6 +58,8 @@ def bilder_schneiden(img_folder_path):
     # Definieren des Schwellenwerts für Schwarz/Graue Pixel und helle Pixel
     THRESHOLD_EDGE = 255/2
 
+    threshold_opening_porositaet = 157
+
     for filename in os.listdir(img_folder_path):
         # Überprüfen, ob die Datei eine Bilddatei ist (z. B. .jpg oder .png)
         save_path_xlsx = os.path.join(xlsx_path, "Porositaet_" + filename[:filename.find('.')] + ".xlsx")
@@ -104,7 +106,7 @@ def bilder_schneiden(img_folder_path):
                 # Dateiname für den zugeschnittenen Bereich
                 # Zuvor wird die Dateiendung (alles hinter dem letzten Punkt) im Dateinamen abgeschnitten --> hier wird dann die weitere Dateibezeichnung angehängt
                 filename_short = filename[:filename.find('.')]
-                crp_name = f"{filename_short}_crp_x_{x}_y_{y}.png"
+                crp_name = f"{filename_short}_crp_x{x}_y{y}.png"
 
                 # Schneide das Bild entsprechend dem Zuschneidebereich zu
                 crp_img = img[crp_y:crp_y + CRP_IMG_HEIGHT, crp_x:crp_x + CRP_IMG_WIDTH]
@@ -123,7 +125,7 @@ def bilder_schneiden(img_folder_path):
 
                     #Porositaet aufrufen und bestimmen (Prorsitaetswert in Variabler dummy zwischen speichern, anschließend Listen generieren)
                     listeneinstrag = listeneinstrag + 1     #Durchlaufvariable zum kontinuirlichen Beschreiben der Listen-Variablen (porositaet.list und name_list)
-                    porositeat = Porositaetmessung.getPorositaet(crp_img_save_path, save_path_closing, save_path_thhold, crp_name)
+                    porositeat = Porositaetmessung.getPorositaet(crp_img_save_path, save_path_closing, save_path_thhold, crp_name, threshold_opening_porositaet)
                     porositaet_list.insert(listeneinstrag, porositeat)
                     name_list.insert(listeneinstrag, crp_name)
 

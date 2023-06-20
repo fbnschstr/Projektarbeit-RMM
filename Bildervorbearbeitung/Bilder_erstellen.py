@@ -57,8 +57,7 @@ def bilder_schneiden(img_folder_path):
 
     # Definieren des Schwellenwerts für Schwarz/Graue Pixel und helle Pixel
     THRESHOLD_EDGE = 255/2
-
-    threshold_opening_porositaet = 157
+    THRESHOLD_OPENING_POROSITAET = 157
 
     for filename in os.listdir(img_folder_path):
         # Überprüfen, ob die Datei eine Bilddatei ist (z. B. .jpg oder .png)
@@ -125,7 +124,7 @@ def bilder_schneiden(img_folder_path):
 
                     #Porositaet aufrufen und bestimmen (Prorsitaetswert in Variabler dummy zwischen speichern, anschließend Listen generieren)
                     listeneinstrag = listeneinstrag + 1     #Durchlaufvariable zum kontinuirlichen Beschreiben der Listen-Variablen (porositaet.list und name_list)
-                    porositeat = Porositaetmessung.getPorositaet(crp_img_save_path, save_path_closing, save_path_thhold, crp_name, threshold_opening_porositaet)
+                    porositeat = Porositaetmessung.getPorositaet(crp_img_save_path, save_path_closing, save_path_thhold, crp_name, THRESHOLD_OPENING_POROSITAET)
                     porositaet_list.insert(listeneinstrag, porositeat)
                     name_list.insert(listeneinstrag, crp_name)
 

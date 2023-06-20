@@ -4,9 +4,10 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 '''------------------------------------------ ------------------------------------------'''
+OPENING_THRESHOLD_DEFAULT = 157
 '''------------------------------------------ Funktion Porositaet ------------------------------------------'''
-def getPorositaet(img_path, save_path_closing, save_path_thhold, f):
-  
+def getPorositaet(img_path, save_path_closing, save_path_thhold, f, opening_threshold):
+    
     # Liste ausgeben, welche Bilddateien im Order abliegen mit dem Befehl os.listdir 
     files = os.listdir(img_path)
 
@@ -41,7 +42,7 @@ def getPorositaet(img_path, save_path_closing, save_path_thhold, f):
             opening = cv2.morphologyEx(img, cv2.MORPH_OPEN, kernel)
             
             # Threshold festlegen, dabei Verwenden von Thresh Binary --> Bild wird nur noch in schwarz und weiß, keine graustufen dargestellt.
-            ret,th1 = cv2.threshold(opening,157,255,cv2.THRESH_BINARY)
+            ret,th1 = cv2.threshold(opening,opening_threshold,255,cv2.THRESH_BINARY)
             
             # Zählen der Pixel, die schwarz und weiß sind. 
             # Zählen wird mit dem threshold-Bild durchgeführt, da es hier nur noch schwarz und weiß gibt.

@@ -21,6 +21,7 @@ def rand(img, threshold):
     height, width = img.shape
     black_row = False
     black_column = False
+
     for row in range(height):
         if np.mean(img[row,:]) < threshold:
             black_row = True
@@ -28,11 +29,11 @@ def rand(img, threshold):
     for column in range(width):
         if np.mean(img[:,column]) < threshold:
             black_column = True
-            
+
     if black_column or black_row:
         return True
     return False
-'''------------------------------------------ ------------------------------------------'''
+'''------------------------------------------  ------------------------------------------'''
 def bilder_schneiden(img_folder_path):
     '''------------------------------------------ Ordnerstrucktur aufbauen ------------------------------------------'''
 
@@ -56,6 +57,7 @@ def bilder_schneiden(img_folder_path):
 
     # Definieren des Schwellenwerts für Schwarz/Graue Pixel und helle Pixel
     THRESHOLD_EDGE = 255/2
+    THRESHOLD_OPENING_POROSITAET = 157
 
     for filename in os.listdir(img_folder_path):
         # Überprüfen, ob die Datei eine Bilddatei ist (z. B. .jpg oder .png)
@@ -65,16 +67,16 @@ def bilder_schneiden(img_folder_path):
 
         # Voller Pfad zur Bilddatei
         image_path = os.path.join(img_folder_path, filename)
-        
+
         # Öffne das Bild mit cv2 und konvertiere es in Graustufen
         img = cv2.imread(image_path)
         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        
+
         # Bestimme die Größe des Bildes in mm (Annahme: Größe des Referenzbalkens ist bekannt)
         # Beispielhaft wird hier die Größe als (Breite, Höhe) in mm ausgegeben
         breite_mm = img.shape[1] * REFERENZBALKEN_MM / REFERENZBALKEN_PIXEL
         höhe_mm = img.shape[0] * REFERENZBALKEN_MM / REFERENZBALKEN_PIXEL
-        
+
         # Ausgabe der Bildgröße
         print(f"Datei: {filename} | Breite: {breite_mm} mm | Höhe: {höhe_mm} mm")
 
@@ -95,15 +97,15 @@ def bilder_schneiden(img_folder_path):
         # Schleife für jeden Zuschneidebereich
         for x in range(anzahl_bilder_x):
             for y in range(anzahl_bilder_y):
-                
+
                 # Berechne die Koordinaten des aktuellen Zuschneidebereichs
                 crp_x = (x * int(CRP_IMG_WIDTH)) + rand_width
                 crp_y = (y * int(CRP_IMG_HEIGHT) ) + rand_height
-                
+
                 # Dateiname für den zugeschnittenen Bereich
                 # Zuvor wird die Dateiendung (alles hinter dem letzten Punkt) im Dateinamen abgeschnitten --> hier wird dann die weitere Dateibezeichnung angehängt
                 filename_short = filename[:filename.find('.')]
-                crp_name = f"{filename_short}_crp_x_{x}_y_{y}.png"  
+                crp_name = f"{filename_short}_crp_x{x}_y{y}.png"
 
                 # Schneide das Bild entsprechend dem Zuschneidebereich zu
                 crp_img = img[crp_y:crp_y + CRP_IMG_HEIGHT, crp_x:crp_x + CRP_IMG_WIDTH]
@@ -116,13 +118,13 @@ def bilder_schneiden(img_folder_path):
                 else:
                     # kein Randbild
                     img_crp_save_path = os.path.join(crp_img_save_path,crp_name)
-                    
+
                     # Speichere das zugeschnittene Bild
                     cv2.imwrite(img_crp_save_path, crp_img)
 
                     #Porositaet aufrufen und bestimmen (Prorsitaetswert in Variabler dummy zwischen speichern, anschließend Listen generieren)
                     listeneinstrag = listeneinstrag + 1     #Durchlaufvariable zum kontinuirlichen Beschreiben der Listen-Variablen (porositaet.list und name_list)
-                    porositeat = Porositaetmessung.getPorositaet(crp_img_save_path, save_path_closing, save_path_thhold, crp_name)
+                    porositeat = Porositaetmessung.getPorositaet(crp_img_save_path, save_path_closing, save_path_thhold, crp_name, THRESHOLD_OPENING_POROSITAET)
                     porositaet_list.insert(listeneinstrag, porositeat)
                     name_list.insert(listeneinstrag, crp_name)
 

@@ -94,7 +94,7 @@ def bilder_schneiden(img_folder_path):
         '''------------------------------------------ Bilder drehen ------------------------------------------'''
         
         img = cv2.imread(image_path)
-        drehen(filename= filename, image_path= image_path, path= img_folder_path, image= img, angle= ANGLE)
+        # drehen(filename= filename, image_path= image_path, path= img_folder_path, image= img, angle= ANGLE)
         
         '''------------------------------------------ Bilder in Schwarz-Weiß konvertieren ------------------------------------------'''
         

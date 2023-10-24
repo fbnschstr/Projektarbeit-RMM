@@ -5,3 +5,4 @@
 .png
 .pycache
 /vscode/
+.pyc

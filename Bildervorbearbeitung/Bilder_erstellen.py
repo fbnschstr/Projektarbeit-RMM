@@ -2,10 +2,11 @@
 import csv
 import os
 import cv2
+import imutils as imu
 import numpy as np
 import pandas as pd
 import Porositaetmessung
-'''------------------------------------------ ------------------------------------------'''
+'''------------------------------------------ Ordner erstellen ------------------------------------------'''
 def ornder_erstellen(ordner_name, ordner_pfad, delete = False):
     pfad_ersteller_ordner = os.path.join(ordner_pfad, ordner_name)
     if os.path.exists(pfad_ersteller_ordner):
@@ -16,7 +17,7 @@ def ornder_erstellen(ordner_name, ordner_pfad, delete = False):
         return pfad_ersteller_ordner
     os.mkdir(pfad_ersteller_ordner)
     return pfad_ersteller_ordner
-'''------------------------------------------ ------------------------------------------'''
+'''------------------------------------------ Rand erkennen ------------------------------------------'''
 def rand(img, threshold):
     height, width = img.shape
     black_row = False
@@ -33,7 +34,26 @@ def rand(img, threshold):
     if black_column or black_row:
         return True
     return False
+'''------------------------------------------ Bilder drehen ------------------------------------------'''
+def drehen (filename, image_path, path, image, angle):
+        number_rotations = 360 // angle
+        img = cv2.imread(image_path)
+        (heigt, width) = image.shape[:2]
+        center = (width / 2, heigt / 2)
+        scale = 1
+        
+        for x in range(number_rotations-1):
+            cal_angle = angle + x * angle
+            # Cal steht für calculated
+            middle = cv2.getRotationMatrix2D(center, angle, scale)
+            rotated_img = cv2.warpAffine(image, middle, (width, heigt))
+
+            # rotated_img = imu.rotate_bound(image, cal_angle)
+            rotated_name = f"{filename}_Winkel_{cal_angle}.png"
+            rot_img_save_path = os.path.join(path,rotated_name)
+            cv2.imwrite(rot_img_save_path, rotated_img)
 '''------------------------------------------  ------------------------------------------'''
+
 def bilder_schneiden(img_folder_path):
     '''------------------------------------------ Ordnerstrucktur aufbauen ------------------------------------------'''
 
@@ -42,6 +62,9 @@ def bilder_schneiden(img_folder_path):
     save_path_closing = ornder_erstellen("Bilder_Closed", img_folder_path, delete = True)
     save_path_thhold = ornder_erstellen("Threshold", save_path_closing, delete = True)
     xlsx_path = ornder_erstellen("xlsx", img_folder_path)
+    '''------------------------------------------ Funktion: Bilder drehen definieren ------------------------------------------'''
+    
+    ANGLE = 30
     '''------------------------------------------ Programmkonstanten definieren ------------------------------------------'''
     #Länge des Referenzebalkens
     REFERENZBALKEN_PIXEL = 1462  # Größe des Referenzbalkens in Pixeln
@@ -67,13 +90,19 @@ def bilder_schneiden(img_folder_path):
 
         # Voller Pfad zur Bilddatei
         image_path = os.path.join(img_folder_path, filename)
-
-        # Öffne das Bild mit cv2 und konvertiere es in Graustufen
+        
+        '''------------------------------------------ Bilder drehen ------------------------------------------'''
+        
         img = cv2.imread(image_path)
+        drehen(filename= filename, image_path= image_path, path= img_folder_path, image= img, angle= ANGLE)
+        
+        '''------------------------------------------ Bilder in Schwarz-Weiß konvertieren ------------------------------------------'''
+        
+        
+        # Öffne das Bild mit cv2 und konvertiere es in Graustufen
         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
         # Bestimme die Größe des Bildes in mm (Annahme: Größe des Referenzbalkens ist bekannt)
-        # Beispielhaft wird hier die Größe als (Breite, Höhe) in mm ausgegeben
         breite_mm = img.shape[1] * REFERENZBALKEN_MM / REFERENZBALKEN_PIXEL
         höhe_mm = img.shape[0] * REFERENZBALKEN_MM / REFERENZBALKEN_PIXEL
 
@@ -132,5 +161,6 @@ def bilder_schneiden(img_folder_path):
         df = pd.DataFrame(data=zip(name_list, porositaet_list), columns=['Bildname','Porositaet'])
         df.to_excel(save_path_xlsx, index=False)
 
-img_folder_path = ornder_erstellen("Bilder", os.path.dirname(__file__), delete = False)
-bilder_schneiden(img_folder_path)
+if __name__ == '__main__':
+    img_folder_path = ornder_erstellen("Bilder", os.path.dirname(__file__), delete = False)
+    bilder_schneiden(img_folder_path)

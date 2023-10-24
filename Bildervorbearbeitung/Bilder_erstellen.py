@@ -38,10 +38,17 @@ def rand(img, threshold):
 def drehen (filename, image_path, path, image, angle):
         number_rotations = 360 // angle
         img = cv2.imread(image_path)
+        (heigt, width) = image.shape[:2]
+        center = (width / 2, heigt / 2)
+        scale = 1
+        
         for x in range(number_rotations-1):
             cal_angle = angle + x * angle
             # Cal steht für calculated
-            rotated_img = imu.rotate_bound(image, cal_angle)
+            middle = cv2.getRotationMatrix2D(center, angle, scale)
+            rotated_img = cv2.warpAffine(image, middle, (width, heigt))
+
+            # rotated_img = imu.rotate_bound(image, cal_angle)
             rotated_name = f"{filename}_Winkel_{cal_angle}.png"
             rot_img_save_path = os.path.join(path,rotated_name)
             cv2.imwrite(rot_img_save_path, rotated_img)

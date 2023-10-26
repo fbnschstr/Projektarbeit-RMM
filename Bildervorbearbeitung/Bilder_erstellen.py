@@ -34,6 +34,7 @@ def rand(img, threshold):
     if black_column or black_row:
         return True
     return False
+
 '''------------------------------------------  ------------------------------------------'''
 def bilder_schneiden(img_folder_path):
     '''------------------------------------------ Ordnerstrucktur aufbauen ------------------------------------------'''
@@ -43,20 +44,7 @@ def bilder_schneiden(img_folder_path):
     save_path_closing = ornder_erstellen("Bilder_Closed", img_folder_path, delete = True)
     save_path_thhold = ornder_erstellen("Threshold", save_path_closing, delete = True)
     xlsx_path = ornder_erstellen("xlsx", img_folder_path)
-    '''------------------------------------------ Funktion: Bilder drehen definieren ------------------------------------------'''
-    angle = 30
-    number_rotations = 360 // angle
-    
-    def drehen (path, image, angle):
-        img = cv2.imread(image_path)
-        for x in range(number_rotations-1):
-            cal_angle = angle + x * angle
-            # Cal steht für calculated
-            rotated_img = imu.rotate_bound(image, cal_angle)
-            rotated_name = f"{filename}_Winkel_{cal_angle}.png"
-            rot_img_save_path = os.path.join(path,rotated_name)
-            cv2.imwrite(rot_img_save_path, rotated_img)
-
+   
     '''------------------------------------------ Programmkonstanten definieren ------------------------------------------'''
     #Länge des Referenzebalkens
     REFERENZBALKEN_PIXEL = 1462  # Größe des Referenzbalkens in Pixeln

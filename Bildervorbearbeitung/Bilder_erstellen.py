@@ -34,7 +34,8 @@ def rand(img, threshold):
     if black_column or black_row:
         return True
     return False
-'''------------------------------------------ Bilder drehen ------------------------------------------'''
+
+  '''------------------------------------------ Bilder drehen ------------------------------------------'''
 def drehen (filename, image_save_path, image, angle):
     
     number_rotations = 360 // angle
@@ -51,8 +52,6 @@ def drehen (filename, image_save_path, image, angle):
     return rot_img_save_path
 
 def bilder_schneiden(img_folder_path):
-
-
     '''------------------------------------------ Programmkonstanten definieren ------------------------------------------'''
     #Länge des Referenzebalkens
     REFERENZBALKEN_PIXEL = 1462  # Größe des Referenzbalkens in Pixeln

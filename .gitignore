@@ -3,3 +3,6 @@
 *.png
 *.xlsx
 .png
+.pycache
+/vscode/
+.pyc

@@ -6,7 +6,7 @@ import imutils as imu
 import numpy as np
 import pandas as pd
 import Porositaetmessung
-'''------------------------------------------ Ordner erstellen ------------------------------------------'''
+'''------------------------------------------ Ordner erstellen ---------------------------------------'''
 def ornder_erstellen(ordner_name, ordner_pfad, delete = False):
     pfad_ersteller_ordner = os.path.join(ordner_pfad, ordner_name)
     if os.path.exists(pfad_ersteller_ordner):
@@ -44,7 +44,7 @@ def drehen (filename, image_save_path, image, angle):
         cal_angle = angle + x * angle
         # Cal steht für calculated
         rotated_img = imu.rotate_bound(image, cal_angle)
-        filename_short, file_extension = os.path.splitext(filename)
+        filename_short = os.path.splitext(filename)
         rotated_name = f"{filename_short}_Winkel_{cal_angle}.png"
         save_path = os.path.join(rot_img_save_path, rotated_name)
         cv2.imwrite(save_path, rotated_img)
@@ -161,7 +161,7 @@ if __name__ == '__main__':
 
         rotated_image_path = drehen(filename= filename, image_save_path= img_folder_path, image= img, angle= 90)
 
-    '''------------------------------------------ Ordnerstrucktur aufbauen ------------------------------------------'''
+    '''------------------------------------------ Ordnerstrucktur aufbauen ----------------------------'''
     crp_img_save_path = ornder_erstellen("Zugeschnittene_Bilder", img_folder_path, delete = True)
     crp_img_save_path_rand = ornder_erstellen("Rand", img_folder_path, delete = True)
     save_path_closing = ornder_erstellen("Bilder_Closed", img_folder_path, delete = True)

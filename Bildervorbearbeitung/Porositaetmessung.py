@@ -60,10 +60,10 @@ def getPorositaet(img_path, save_path_closing, save_path_thhold, f, opening_thre
             #print("Gesamtanzahl Pixel:", ges_pixel)
                 
             # Berechnen der Poroesitaet in Prozent
-            poroesitaet = (black_pixel/ges_pixel)*100
+            poroesitaet = (black_pixel/ges_pixel) * 100
             ##poroesitaet_round = round(poroesitaet, 3)
             #print("Poroesität der Probe in %",poroesitaet)
-            dichte = (white_pixel/ges_pixel)*100
+            dichte = (white_pixel/ges_pixel) * 100
             #print("Dichte der Probe in %",dichte) 
             
             ''' optional: # plotten Threshold --> Wird der Wert 200 nach oben verschoben, können auch die schwarzen Anteile nach oben verschoben werden. 
@@ -77,18 +77,18 @@ def getPorositaet(img_path, save_path_closing, save_path_thhold, f, opening_thre
         
             # Dateinamen mit Poroesitaet
             file_name_th1 = f"{file_name_short}_Por_{poroesitaet}.png"
-            ##file_name_th1 = f"{file_name_short}_Por_{poroesitaet_round}.png"
+            #file_name_th1 = f"{file_name_short}_Por_{poroesitaet_round}.png"
 
-            ####file_name_th1 = f"{image_name}_Por_{poroesitaet}.png"
+            #file_name_th1 = f"{image_name}_Por_{poroesitaet}.png"
             save_path_thhold_img = os.path.join(save_path_thhold, file_name_th1)
             #print("save_path_thhold_img:",save_path_thhold_img)   
         
             #Bild abspeichern unter dem Namen closed_'Dateiname'.png 
-            os.chdir(save_path_closing)
-            cv2.imwrite(save_path_closing_img, opening)
+            # os.chdir(save_path_closing)
+            # cv2.imwrite(save_path_closing_img, opening)
             
-            os.chdir(save_path_thhold)        
-            cv2.imwrite(save_path_thhold_img, th1)
+            # os.chdir(save_path_thhold)        
+            # cv2.imwrite(save_path_thhold_img, th1)
             
             '''if not os.path.exists(save_path_closing_img):
                 cv2.imwrite(file_name, opening)

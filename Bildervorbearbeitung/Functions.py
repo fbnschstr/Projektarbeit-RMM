@@ -1,11 +1,78 @@
 import os
 import cv2 
 import numpy as np
+import csv
+import imutils as imu
+import pandas as pd
 from matplotlib import pyplot as plt
+
+
 
 '''------------------------------------------ ------------------------------------------'''
 OPENING_THRESHOLD_DEFAULT = 157
-'''------------------------------------------ Funktion Porositaet ------------------------------------------'''
+
+'''------------------------------------------ Ordner erstellen (Funktion) ------------------------------------------'''
+def ornder_erstellen(ordner_name, ordner_pfad, delete = False):
+    pfad_ersteller_ordner = os.path.join(ordner_pfad, ordner_name)
+    if os.path.exists(pfad_ersteller_ordner):
+        if delete:
+            #for f in os.listdir(pfad_ersteller_ordner):
+            #    os.remove(os.path.join(pfad_ersteller_ordner, f))
+            print("muss noch gemacht werden")
+        return pfad_ersteller_ordner
+    os.mkdir(pfad_ersteller_ordner)
+    return pfad_ersteller_ordner
+
+'''------------------------------------------ Bild drehen (Funktion)------------------------------------------'''
+def drehen (save_path, image, angle, filename):
+    number_rotations = 360 // angle
+
+    for x in range(number_rotations):
+        cal_angle = angle + x * angle
+        # Cal steht für calculated
+
+        if cal_angle == 360:
+            if filename in os.listdir(save_path):
+                # prevent ambigous imgs
+                break
+            else:
+                # do the 360 img
+                rotated_img = imu.rotate_bound(image, cal_angle)
+
+                file_name_short = filename[:filename.find('.')]
+                rotated_name = f"{file_name_short}_Winkel_{cal_angle}.png"
+                #rotated_name = f"{filename}_Winkel_{cal_angle}.png"
+                rot_img_save_path = os.path.join(save_path,rotated_name)
+                cv2.imwrite(rot_img_save_path, rotated_img)
+        else:
+            rotated_img = imu.rotate_bound(image, cal_angle)
+
+            file_name_short = filename[:filename.find('.')]
+            rotated_name = f"{file_name_short}_Winkel_{cal_angle}.png"
+
+            #rotated_name = f"{filename}_Winkel_{cal_angle}.png"
+            rot_img_save_path = os.path.join(save_path,rotated_name)
+            cv2.imwrite(rot_img_save_path, rotated_img)
+
+'''------------------------------------------ Rand erkennen (Funktion)------------------------------------------'''
+def rand(img, threshold):
+    height, width = img.shape
+    black_row = False
+    black_column = False
+
+    for row in range(height):
+        if np.mean(img[row,:]) < threshold:
+            black_row = True
+
+    for column in range(width):
+        if np.mean(img[:,column]) < threshold:
+            black_column = True
+
+    if black_column or black_row:
+        return True
+    return False
+
+'''------------------------------------------ Porositaet ermitteln (Funktion) ------------------------------------------'''
 def getPorositaet(img_path, save_path_closing, save_path_thhold, f, opening_threshold):
     
     # Liste ausgeben, welche Bilddateien im Order abliegen mit dem Befehl os.listdir 
@@ -23,7 +90,7 @@ def getPorositaet(img_path, save_path_closing, save_path_thhold, f, opening_thre
 
             # Dateiendung abschneiden
             file_name_short = image_name[:image_name.find('.')]
-            print(file_name_short)
+            #print(file_name_short)
             
             # Pfad zum Suchen der Bilder festlegen
             '''mit os.chdir, wird festgelegt in welchem Ordner die Bilder abgespeichert werden können

@@ -5,7 +5,9 @@ import cv2
 import imutils as imu
 import numpy as np
 import pandas as pd
+import Functions
 
+def bilder_schneiden(img_folder_path)
     '''------------------------------------------ Programmkonstanten definieren ------------------------------------------'''
     #Länge des Referenzebalkens
     REFERENZBALKEN_PIXEL = 1462  # Größe des Referenzbalkens in Pixeln

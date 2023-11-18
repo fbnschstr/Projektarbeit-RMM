@@ -5,53 +5,7 @@ import cv2
 import imutils as imu
 import numpy as np
 import pandas as pd
-import Porositaetmessung
-'''------------------------------------------ Ordner erstellen ------------------------------------------'''
-def ornder_erstellen(ordner_name, ordner_pfad, delete = False):
-    pfad_ersteller_ordner = os.path.join(ordner_pfad, ordner_name)
-    if os.path.exists(pfad_ersteller_ordner):
-        if delete:
-            #for f in os.listdir(pfad_ersteller_ordner):
-            #    os.remove(os.path.join(pfad_ersteller_ordner, f))
-            print("muss noch gemacht werden")
-        return pfad_ersteller_ordner
-    os.mkdir(pfad_ersteller_ordner)
-    return pfad_ersteller_ordner
-'''------------------------------------------ Rand erkennen ------------------------------------------'''
-def rand(img, threshold):
-    height, width = img.shape
-    black_row = False
-    black_column = False
 
-    for row in range(height):
-        if np.mean(img[row,:]) < threshold:
-            black_row = True
-
-    for column in range(width):
-        if np.mean(img[:,column]) < threshold:
-            black_column = True
-
-    if black_column or black_row:
-        return True
-    return False
-
-  '''------------------------------------------ Bilder drehen ------------------------------------------'''
-def drehen (filename, image_save_path, image, angle):
-    
-    number_rotations = 360 // angle
-    rot_img_save_path = ornder_erstellen("gedrehte Bilder", image_save_path, delete= True)
-    
-    for x in range(number_rotations):
-        cal_angle = angle + x * angle
-        # Cal steht für calculated
-        rotated_img = imu.rotate_bound(image, cal_angle)
-        filename_short, file_extension = os.path.splitext(filename)
-        rotated_name = f"{filename_short}_Winkel_{cal_angle}.png"
-        save_path = os.path.join(rot_img_save_path, rotated_name)
-        cv2.imwrite(save_path, rotated_img)
-    return rot_img_save_path
-
-def bilder_schneiden(img_folder_path):
     '''------------------------------------------ Programmkonstanten definieren ------------------------------------------'''
     #Länge des Referenzebalkens
     REFERENZBALKEN_PIXEL = 1462  # Größe des Referenzbalkens in Pixeln
@@ -69,6 +23,7 @@ def bilder_schneiden(img_folder_path):
     THRESHOLD_EDGE = 255/2
     THRESHOLD_OPENING_POROSITAET = 157
 
+    # Drehe alle png/jpg-Dateien im Unterordner "Bilder" (=img_folder_path)
     for filename in os.listdir(img_folder_path):
         # Überprüfen, ob die Datei eine Bilddatei ist (z. B. .jpg oder .png)
         save_path_xlsx = os.path.join(xlsx_path, "Porositaet_" + filename[:filename.find('.')] + ".xlsx")
@@ -79,17 +34,28 @@ def bilder_schneiden(img_folder_path):
         image_path = os.path.join(img_folder_path, filename)
         
         '''------------------------------------------ Bilder drehen ------------------------------------------'''
-        
         img = cv2.imread(image_path)
-        # drehen(filename= filename, image_path= image_path, path= img_folder_path, image= img, angle= ANGLE)
-        
+        angle = 180
+        Functions.drehen(analysis_path, img, angle, filename)
+
+    # Zerschneide alle (gedrehten) png/jpg-Dateien aus dem Unterordner "Auswertung" (=analysis_path)
+    for filename in os.listdir(analysis_path): 
+        # Überprüfen, ob die Datei eine Bilddatei ist (z. B. .jpg oder .png)
+        save_path_xlsx = os.path.join(xlsx_path, "Porositaet_" + filename[:filename.find('.')] + ".xlsx")
+        if not (filename.endswith('.jpg') or filename.endswith('.png')):
+            continue
+
+        # Voller Pfad zur Bilddatei
+        image_path = os.path.join(analysis_path, filename)
+        img = cv2.imread(image_path)
         '''------------------------------------------ Bilder in Schwarz-Weiß konvertieren ------------------------------------------'''
         
-        
         # Öffne das Bild mit cv2 und konvertiere es in Graustufen
+        #img = cv2.imread(image_path)
         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
         # Bestimme die Größe des Bildes in mm (Annahme: Größe des Referenzbalkens ist bekannt)
+        # Beispielhaft wird hier die Größe als (Breite, Höhe) in mm ausgegeben
         breite_mm = img.shape[1] * REFERENZBALKEN_MM / REFERENZBALKEN_PIXEL
         höhe_mm = img.shape[0] * REFERENZBALKEN_MM / REFERENZBALKEN_PIXEL
 
@@ -105,7 +71,7 @@ def bilder_schneiden(img_folder_path):
         rand_width  = (img.shape[1] % CRP_IMG_WIDTH) // 2
 
         # Initialisierung der leeren Listen für für Porosität und Bildnamen (notwendig um Excel zu generieren)
-        listeneinstrag = 0
+        # listeneinstrag = 0
         porositaet_list = []
         name_list = []
 
@@ -122,59 +88,51 @@ def bilder_schneiden(img_folder_path):
                 # Zuvor wird die Dateiendung (alles hinter dem letzten Punkt) im Dateinamen abgeschnitten --> hier wird dann die weitere Dateibezeichnung angehängt
                 filename_short = filename[:filename.find('.')]
                 crp_name = f"{filename_short}_crp_x{x}_y{y}.png"
+                #crp_name = f"{filename}_crp_x{x}_y{y}.png"
 
                 # Schneide das Bild entsprechend dem Zuschneidebereich zu
                 crp_img = img[crp_y:crp_y + CRP_IMG_HEIGHT, crp_x:crp_x + CRP_IMG_WIDTH]
 
-                if rand(crp_img, THRESHOLD_EDGE):
+                if Functions.rand(crp_img, THRESHOLD_EDGE):
                     # Randbild
                     img_crp_save_path = os.path.join(crp_img_save_path_rand,crp_name)
                     # Speichere das zugeschnittene Bild
                     cv2.imwrite(img_crp_save_path, crp_img)
                 else:
                     # kein Randbild
+                    img_crp_save_path_rotate = crp_img_save_path
                     img_crp_save_path = os.path.join(crp_img_save_path,crp_name)
 
-                    # Speichere das zugeschnittene Bild
-                    cv2.imwrite(img_crp_save_path, crp_img)
+                    # Zugeschnittenes Bild drehen
+                    angle = 90
+                    Functions.drehen(img_crp_save_path_rotate, crp_img, angle, crp_name)
 
-                    #Porositaet aufrufen und bestimmen (Prorsitaetswert in Variabler dummy zwischen speichern, anschließend Listen generieren)
-                    listeneinstrag = listeneinstrag + 1     #Durchlaufvariable zum kontinuirlichen Beschreiben der Listen-Variablen (porositaet.list und name_list)
-                    porositeat = Porositaetmessung.getPorositaet(crp_img_save_path, save_path_closing, save_path_thhold, crp_name, THRESHOLD_OPENING_POROSITAET)
-                    porositaet_list.insert(listeneinstrag, porositeat)
-                    name_list.insert(listeneinstrag, crp_name)
+                    # # Speichere das zugeschnittene Bild
+                    # cv2.imwrite(img_crp_save_path, crp_img)
 
-        '''Listen in DataFrame zusammenführen und als Excel abspeichern'''
-        df = pd.DataFrame(data=zip(name_list, porositaet_list), columns=['Bildname','Porositaet'])
-        df.to_excel(save_path_xlsx, index=False)
+    for filename_cropped_rotated, listeneinstrag in zip(os.listdir(img_crp_save_path_rotate), range(1, len(os.listdir(img_crp_save_path_rotate))+1)):
+        # Porositaet aufrufen und bestimmen (Prorsitaetswert in Variabler dummy zwischen speichern, anschließend Listen generieren)
+        # listeneinstrag = listeneinstrag + 1     #Durchlaufvariable zum kontinuirlichen Beschreiben der Listen-Variablen (porositaet.list und name_list)
+        porositeat = Functions.getPorositaet(img_crp_save_path_rotate, save_path_closing, save_path_thhold, filename_cropped_rotated, THRESHOLD_OPENING_POROSITAET)
+        porositaet_list.insert(listeneinstrag, porositeat)
+        name_list.insert(listeneinstrag, filename_cropped_rotated)
+
+    '''Listen in DataFrame zusammenführen und als Excel abspeichern'''
+    df = pd.DataFrame(data=zip(name_list, porositaet_list), columns=['Bildname','Porositaet'])
+    df.to_excel(save_path_xlsx, index=False)
+
+
 
 if __name__ == '__main__':
-    img_folder_path = ornder_erstellen("Bilder", os.path.dirname(__file__), delete = False)
-
-    for filename in os.listdir(img_folder_path):
-        if not (filename.endswith('.jpg') or filename.endswith('.png')):
-            continue
-        # Voller Pfad zur Bilddatei
-        image_path = os.path.join(img_folder_path, filename)
-        img = cv2.imread(image_path)
-
-        rotated_image_path = drehen(filename= filename, image_save_path= img_folder_path, image= img, angle= 90)
+    img_folder_path = Functions.ornder_erstellen("Bilder", os.path.dirname(__file__), delete = False)
 
     '''------------------------------------------ Ordnerstrucktur aufbauen ------------------------------------------'''
-    crp_img_save_path = ornder_erstellen("Zugeschnittene_Bilder", img_folder_path, delete = True)
-    crp_img_save_path_rand = ornder_erstellen("Rand", img_folder_path, delete = True)
-    save_path_closing = ornder_erstellen("Bilder_Closed", img_folder_path, delete = True)
-    save_path_thhold = ornder_erstellen("Threshold", save_path_closing, delete = True)
-    xlsx_path = ornder_erstellen("xlsx", img_folder_path)
+    analysis_path = Functions.ornder_erstellen("Auswertung", img_folder_path, delete = False)
 
-    for filename in os.listdir(rotated_image_path):
-        bilder_schneiden(rotated_image_path)
-
-    for filename in os.listdir(rotated_image_path):
-        if not (filename.endswith('.jpg') or filename.endswith('.png')):
-            continue
-        # Voller Pfad zur Bilddatei
-        image_path = os.path.join(rotated_image_path, filename)
-        img = cv2.imread(image_path)
-
-        rotated_image_path = drehen(filename= filename, image_save_path= crp_img_save_path, image= img, angle= 90)
+    crp_img_save_path = Functions.ornder_erstellen("Zugeschnittene_Bilder", analysis_path, delete = True)
+    crp_img_save_path_rand = Functions.ornder_erstellen("Rand", analysis_path, delete = True)
+    save_path_closing = Functions.ornder_erstellen("Bilder_Closed", analysis_path, delete = True)
+    save_path_thhold = Functions.ornder_erstellen("Threshold", save_path_closing, delete = True)
+    xlsx_path = Functions.ornder_erstellen("xlsx", analysis_path)
+    
+    bilder_schneiden(img_folder_path)

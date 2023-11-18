@@ -5,11 +5,6 @@ import cv2
 import imutils as imu
 import numpy as np
 import pandas as pd
-import Functions
-
-
-'''------------------------------------------ Bilder drehen und zerschneiden ------------------------------------------'''
-def bilder_schneiden(img_folder_path):
 
     '''------------------------------------------ Programmkonstanten definieren ------------------------------------------'''
     #Länge des Referenzebalkens

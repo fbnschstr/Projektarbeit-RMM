@@ -1,6 +1,6 @@
 # Projektarbeit-RMM
 Autoren: Laura Hipp, Maria Sauer, Fabian Schuster
-Nächste Regelbesprechung: 10.05.23
+Nächste Regelbesprechung: 26.10.23 8:00 Uhr (14-tägiger Regeltermin)
 # Thema: Machine Learning in der Werkstoffkunde
 ## Exceldateien
 https://1drv.ms/f/s!AjEgyPwXY8SChLhqKEbgBKRvr21Z-Q?e=lMBsGd

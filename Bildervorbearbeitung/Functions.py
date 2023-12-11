@@ -151,11 +151,11 @@ def getPorositaet(img_path, save_path_closing, save_path_thhold, f, opening_thre
             #print("save_path_thhold_img:",save_path_thhold_img)   
         
             #Bild abspeichern unter dem Namen closed_'Dateiname'.png 
-            # os.chdir(save_path_closing)
-            # cv2.imwrite(save_path_closing_img, opening)
+            os.chdir(save_path_closing)
+            cv2.imwrite(save_path_closing_img, opening)
             
-            # os.chdir(save_path_thhold)        
-            # cv2.imwrite(save_path_thhold_img, th1)
+            os.chdir(save_path_thhold)        
+            cv2.imwrite(save_path_thhold_img, th1)
             
             '''if not os.path.exists(save_path_closing_img):
                 cv2.imwrite(file_name, opening)
